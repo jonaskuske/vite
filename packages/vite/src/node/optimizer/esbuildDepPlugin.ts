@@ -1,4 +1,5 @@
 import path from 'node:path'
+import { readFile } from 'node:fs/promises'
 import type { ImportKind, Plugin } from 'esbuild'
 import { KNOWN_ASSET_TYPES } from '../constants'
 import { getDepOptimizationConfig } from '..'
@@ -256,6 +257,28 @@ module.exports = Object.create(new Proxy({}, {
           }
         }
       )
+
+      build.onLoad({ filter: /^\// }, async ({ path: loadedPath }) => {
+        if (config.isProduction) return null
+
+        const regex =
+          /((?:^|[^$_\p{L}\p{N}])new\s+URL\s*\(\s*(['"`])\s*\..*\2\s*,)\s*import\s*\.\s*meta\s*\.\s*url\s*,?\s*\)/gsu
+
+        const src = await readFile(loadedPath, 'utf-8')
+
+        if (regex.test(src)) {
+          const dependencyDir = encodeURIComponent(
+            normalizePath(path.dirname(loadedPath))
+          )
+
+          const contents = src.replace(
+            regex,
+            `$1new URL(import.meta.env.BASE_URL + '@fs/${dependencyDir}/', import.meta.url).href)`
+          )
+
+          return { contents }
+        }
+      })
     }
   }
 }

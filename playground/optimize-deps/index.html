@@ -93,6 +93,18 @@
 <h2>Non Optimized Module isn't duplicated</h2>
 <div class="non-optimized-module-is-not-duplicated"></div>
 
+<h2>Dep using new URL('./asset.txt', import.meta.url)</h2>
+<div class="dep-with-relative-new-url"></div>
+
+<h2>Dep using new URL('pkg/asset.txt', import.meta.url)</h2>
+<div class="dep-with-package-new-url"></div>
+
+<h2>Dep using newWorker(new URL('./w.js', import.meta.url))</h2>
+<div class="dep-with-relative-worker-url"></div>
+
+<h2>Dep using newWorker(new URL('pkg/w.js', import.meta.url))</h2>
+<div class="dep-with-package-worker-url"></div>
+
 <script>
   function text(el, text) {
     document.querySelector(el).textContent = text
@@ -166,6 +178,18 @@
     '.non-optimized-module-is-not-duplicated',
     getFromBareImport().join(', ')
   )
+
+  import fetchRelativeAsset from 'dep-with-relative-new-url'
+  fetchRelativeAsset().then((res) => text('.dep-with-relative-new-url', res))
+
+  import fetchPackageAsset from 'dep-with-package-new-url'
+  fetchPackageAsset().then((res) => text('.dep-with-package-new-url', res))
+
+  import startWorkerRelative from 'dep-with-relative-worker-url'
+  startWorkerRelative((res) => text('.dep-with-relative-worker-url', res))
+
+  import startWorkerPackage from 'dep-with-package-worker-url'
+  startWorkerPackage((res) => text('.dep-with-package-worker-url', res))
 </script>
 
 <script type="module">

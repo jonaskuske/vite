@@ -91,11 +91,11 @@ export function workerImportMetaUrlPlugin(config: ResolvedConfig): Plugin {
         let s: MagicString | undefined
         const cleanString = stripLiteral(code)
         const workerImportMetaUrlRE =
-          /\bnew\s+(Worker|SharedWorker)\s*\(\s*(new\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*\))/g
+          /(?:^|[^$_\p{L}\p{N}])new\s+(?:Worker|SharedWorker)\s*\(\s*(new\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\s*\.\s*meta\s*\.\s*url\s*\))/gu
 
         let match: RegExpExecArray | null
         while ((match = workerImportMetaUrlRE.exec(cleanString))) {
-          const { 0: allExp, 2: exp, 3: emptyUrl, index } = match
+          const { 0: allExp, 1: exp, 2: emptyUrl, index } = match
           const urlIndex = allExp.indexOf(exp) + index
 
           const urlStart = cleanString.indexOf(emptyUrl, index)
@@ -116,7 +116,7 @@ export function workerImportMetaUrlPlugin(config: ResolvedConfig): Plugin {
             cleanString,
             index + allExp.length
           )
-          const url = rawUrl.slice(1, -1)
+          const url = rawUrl.slice(1, -1).trim()
           let file: string | undefined
           if (url.startsWith('.')) {
             file = path.resolve(path.dirname(id), url)

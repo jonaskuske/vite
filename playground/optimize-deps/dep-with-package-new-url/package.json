@@ -1,0 +1,10 @@
+{
+  "name": "dep-with-package-new-url",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "index.js",
+  "dependencies": {
+    "dep-with-relative-new-url": "file:../dep-with-relative-new-url"
+  }
+}

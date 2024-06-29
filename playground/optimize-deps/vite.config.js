@@ -7,7 +7,7 @@ process.env.NODE_ENV = ''
 /**
  * @type {import('vite').UserConfig}
  */
-module.exports = {
+module.exports = ({ command }) => ({
   resolve: {
     dedupe: ['react'],
     alias: {
@@ -22,7 +22,11 @@ module.exports = {
       // will throw if optimized (should log warning instead)
       'non-optimizable-include'
     ],
-    exclude: ['nested-exclude', 'dep-non-optimized'],
+    exclude: [
+      'nested-exclude',
+      'dep-non-optimized',
+      ...(command === 'build' ? ['dep-with-relative-new-url'] : [])
+    ],
     esbuildOptions: {
       plugins: [
         {
@@ -93,7 +97,7 @@ module.exports = {
       }
     }
   ]
-}
+})
 
 // Handles .notjs file, basically remove wrapping <notjs> and </notjs> tags
 function notjs() {

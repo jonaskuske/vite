@@ -38,7 +38,7 @@ export function assetImportMetaUrlPlugin(config: ResolvedConfig): Plugin {
       ) {
         let s: MagicString | undefined
         const assetImportMetaUrlRE =
-          /\bnew\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*,?\s*\)/g
+          /(?:^|[^$_\p{L}\p{N}])new\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\s*\.\s*meta\s*\.\s*url\s*,?\s*\)/gu
         const cleanString = stripLiteral(code)
 
         let match: RegExpExecArray | null
@@ -70,7 +70,7 @@ export function assetImportMetaUrlPlugin(config: ResolvedConfig): Plugin {
             }
           }
 
-          const url = rawUrl.slice(1, -1)
+          const url = rawUrl.slice(1, -1).trim()
           let file: string | undefined
           if (url.startsWith('.')) {
             file = slash(path.resolve(path.dirname(id), url))

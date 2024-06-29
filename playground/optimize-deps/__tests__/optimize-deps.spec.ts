@@ -156,6 +156,22 @@ test('non optimized module is not duplicated', async () => {
   ).toBe('from-absolute-path, from-relative-path')
 })
 
+test('dep using relative url + import.meta', async () => {
+  expect(await page.textContent('.dep-with-relative-new-url')).toBe('WORKS')
+})
+
+test('dep using package url + import.meta', async () => {
+  expect(await page.textContent('.dep-with-package-new-url')).toBe('WORKS')
+})
+
+test('dep using relative worker url + import.meta', async () => {
+  expect(await page.textContent('.dep-with-relative-worker-url')).toBe('WORKS')
+})
+
+test('dep using package worker url + import.meta', async () => {
+  expect(await page.textContent('.dep-with-package-worker-url')).toBe('WORKS')
+})
+
 test.runIf(isServe)('error on builtin modules usage', () => {
   expect(browserLogs).toEqual(
     expect.arrayContaining([
